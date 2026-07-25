@@ -28,6 +28,12 @@ function parseAmount(value: string) {
   return Number.isFinite(parsed) ? Math.round(parsed) : 0;
 }
 
+function formatAmount(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  if (!digits) return "";
+  return new Intl.NumberFormat("es-AR", { maximumFractionDigits: 0 }).format(Number(digits));
+}
+
 export default function Home() {
   const [sales, setSales] = useState<Sale[]>([]);
   const [amount, setAmount] = useState("");
@@ -120,7 +126,7 @@ export default function Home() {
   }
 
   function appendDigit(digit: string) {
-    setAmount((current) => (current === "0" ? digit : `${current}${digit}`).slice(0, 10));
+    setAmount((current) => formatAmount(`${current.replace(/\D/g, "")}${digit}`));
   }
 
   function undoLastSale() {
@@ -147,7 +153,7 @@ export default function Home() {
         <header className="header">
           <div>
             <p className="eyebrow">REGISTRO SEMANAL</p>
-            <h1>Cierre Caja</h1>
+            <h1>Caja</h1>
           </div>
           <div className="header-actions">
             {installPrompt && <button className="install-button" type="button" onClick={installApp}>Instalar app</button>}
@@ -170,7 +176,7 @@ export default function Home() {
               ref={amountRef}
               id="amount"
               value={amount}
-              onChange={(event) => setAmount(event.target.value)}
+              onChange={(event) => setAmount(formatAmount(event.target.value))}
               inputMode={isMobileKeypad ? "none" : "numeric"}
               readOnly={isMobileKeypad}
               autoComplete="off"
@@ -187,7 +193,7 @@ export default function Home() {
               ))}
               <button type="button" className="keypad-action" onClick={() => setAmount("")}>C</button>
               <button type="button" onClick={() => appendDigit("0")}>0</button>
-              <button type="button" className="keypad-action" aria-label="Borrar último número" onClick={() => setAmount((current) => current.slice(0, -1))}>⌫</button>
+              <button type="button" className="keypad-action" aria-label="Borrar último número" onClick={() => setAmount((current) => formatAmount(current.replace(/\D/g, "").slice(0, -1)))}>⌫</button>
             </div>
           )}
 
