@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cierre Caja",
+  title: "Caja",
   description: "Registro semanal simple de ingresos en efectivo y transferencia.",
   manifest: "/manifest.webmanifest",
 };
