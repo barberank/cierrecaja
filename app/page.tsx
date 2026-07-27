@@ -34,6 +34,10 @@ function formatAmount(value: string) {
   return new Intl.NumberFormat("es-AR", { maximumFractionDigits: 0 }).format(Number(digits));
 }
 
+function registerLastActivity() {
+  void fetch("/api/ultimo-uso", { method: "POST", keepalive: true }).catch(() => undefined);
+}
+
 export default function Home() {
   const [sales, setSales] = useState<Sale[]>([]);
   const [amount, setAmount] = useState("");
@@ -64,6 +68,7 @@ export default function Home() {
     const mobile = window.matchMedia("(max-width: 560px), (pointer: coarse)").matches;
     setIsMobileKeypad(mobile);
     setReady(true);
+    registerLastActivity();
 
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => undefined);
 
@@ -122,6 +127,7 @@ export default function Home() {
     setSales((current) => [sale, ...current]);
     setAmount("");
     flashConfirmation();
+    registerLastActivity();
     if (!isMobileKeypad) amountRef.current?.focus();
   }
 
@@ -223,7 +229,7 @@ export default function Home() {
           )}
         </section>
 
-        <footer>Los datos quedan guardados solamente en este dispositivo y se eliminan al comenzar una nueva semana.</footer>
+        <footer>Esta aplicación registra estadísticas de uso para mejorar el servicio.</footer>
       </section>
     </main>
   );
